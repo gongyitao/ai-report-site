@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent第一阶段成果演示汇报（简版）</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        :root {
+            --bg-1: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --bg-2: #FFFFFF;
+            --bg-3: #F7FAFF;
+            --bg-4: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+            --bg-5: #EEF5FF;
+            --text-strong: #1D2939;
+            --text-normal: #334155;
+            --text-muted: #64748B;
+            --brand: #3B82F6;
+            --brand-2: #22C55E;
+            --brand-3: #F97316;
+            --brand-4: #A855F7;
+            --card-border: #D0E1FF;
+            --shadow-1: 0 10px 30px rgba(63, 131, 248, 0.15);
+            --shadow-2: 0 8px 24px rgba(16, 24, 40, 0.12);
+            --radius: 16px;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-3);
+            color: var(--text-normal);
+            scroll-snap-type: y mandatory;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: start;
+            box-sizing: border-box;
+            padding: 6vh 6vw;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: fadeIn 0.9s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            max-height: 100%;
+            overflow-y: auto;
+            padding: 0 10px 40px 10px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .slide-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Theme backgrounds */
+        #slide1 { background: var(--bg-1); color: #fff; }
+        #slide2 { background: var(--bg-2); }
+        #slide3 { background: var(--bg-3); }
+        #slide3b { background: var(--bg-2); }
+        #slide4 { background: var(--bg-2); }
+        #slide6 { background: var(--bg-2); }
+        #slide14 { background: var(--bg-3); }
+        #slide15 { background: var(--bg-1); color: #fff; }
+
+        /* Typography */
+        h1 { font-size: 3.6rem; font-weight: 700; margin-bottom: 18px; letter-spacing: 0.3px; }
+        h2 { font-size: 2.6rem; font-weight: 700; margin-bottom: 36px; color: var(--text-strong); }
+        h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 14px; color: var(--text-strong); }
+        p { font-size: 1.12rem; line-height: 1.8; max-width: 900px; margin: 0 auto; color: var(--text-normal); }
+        .subtitle { font-size: 1.25rem; font-weight: 400; opacity: 0.95; color: #E6EEFF; }
+        /* 非封面页的副标题使用更深的颜色，提高可读性 */
+        .slide:not(#slide1) .subtitle { color: var(--text-normal); font-weight: 500; opacity: 0.9; }
+
+        .slide:not(#slide1) .slide-content > h1,
+        .slide:not(#slide1) .slide-content > h2 { font-size: 2.6rem !important; line-height: 1.3; }
+
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--brand);
+        }
+        #slide1 .slide-number, #slide15 .slide-number { color: rgba(255,255,255,0.85); }
+
+        /* Motion helpers */
+        .fade-up { opacity: 0; transform: translateY(18px); animation: fadeUp .7s ease forwards; }
+        .fade-in { opacity: 0; animation: fadeInOnly .8s ease forwards; }
+        .delay-1 { animation-delay: .1s; } 
+        .delay-2 { animation-delay: .2s; } 
+        .delay-3 { animation-delay: .3s; } 
+        .delay-4 { animation-delay: .4s; } 
+        .delay-5 { animation-delay: .5s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInOnly { to { opacity: 1; } }
+
+        /* Grid helpers */
+        .grid { display: grid; gap: 22px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-5 { grid-template-columns: repeat(5, 1fr); }
+        @media (max-width: 1200px) { .grid-5 { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 1024px) { .grid-3, .grid-2, .grid-4, .grid-5 { grid-template-columns: 1fr; } }
+
+        /* Cards */
+        .card {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 26px;
+            box-shadow: var(--shadow-1);
+            text-align: left;
+        }
+
+        .challenge-card {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-1);
+            text-align: left;
+            transition: transform .28s, box-shadow .28s;
+        }
+        .challenge-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(59,130,246,.22); }
+
+        /* 当前阶段高亮样式 */
+        .current-phase {
+            border: 2px dashed var(--brand) !important;
+            background: #EFF6FF !important;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25) !important;
+            position: relative;
+        }
+        .current-phase::before {
+            content: "当前阶段";
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--brand);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* 架构图样式 */
+        .architecture-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 10px auto;
+            display: flex;
+            gap: 24px;
+            align-items: stretch;
+        }
+        .arch-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .arch-right {
+            flex: 0 0 280px;
+            display: flex;
+            flex-direction: column;
+            align-self: stretch;
+        }
+        .arch-layer {
+            background: #FFFFFF;
+            border: 2px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 7px 0;
+            box-shadow: var(--shadow-1);
+            position: relative;
+        }
+        .arch-layer-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--brand);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .arch-components {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .arch-component {
+            background: #F0F9FF;
+            border: 1px solid var(--brand);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: var(--text-strong);
+            font-weight: 600;
+            min-width: 100px;
+            text-align: center;
+        }
+        .arch-arrow {
+            text-align: center;
+            font-size: 1.4rem;
+            color: var(--brand);
+            margin: 5px 0;
+        }
+        .arch-output-service {
+            background: #FFFFFF;
+            border: 2px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 6px 0 7px 0;
+            box-shadow: var(--shadow-1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 100%;
+            height: 100%;
+        }
+        .arch-output-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--brand);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .arch-output-item {
+            background: #F0F9FF;
+            border: 1px solid var(--brand);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 4px 0;
+            font-size: 0.85rem;
+            color: var(--text-strong);
+            font-weight: 600;
+            text-align: center;
+        }
+        .arch-arrow-right {
+            text-align: center;
+            font-size: 1.4rem;
+            color: var(--brand);
+            margin: 0 8px;
+            align-self: center;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        /* 第4页特殊优化 */
+        #slide4 .slide-content {
+            padding-bottom: 30px;
+            max-height: calc(100vh - 80px);
+        }
+        #slide4 h2 {
+            margin-bottom: 12px;
+            font-size: 2.2rem;
+        }
+        #slide4 .subtitle {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 封面 -->
+    <div class="slide" id="slide1">
+        <div class="slide-content">
+            <h1 style="font-size: 4rem;">AI Agent第一阶段演示说明</h1>
+            <p class="subtitle">舆情分析Agent、政策监测Agent、AI数据洞察Agent、首提率监测Agent MVP · 功能演示与说明</p>
+            <p style="margin-top: 46px; color: #EAF2FF;">汇报人：AI应用团队</p>
+            <p style="color:#EAF2FF;">[2024-12-15]</p>
+        </div>
+        <div class="slide-number">1 / 8</div>
+    </div>
+
+    <!-- 整体规划回顾 -->
+    <div class="slide" id="slide2">
+        <div class="slide-content">
+            <h2>AI Agent整体规划回顾</h2>
+            <p class="subtitle" style="margin-bottom: 30px;">三阶段实施路线图：由点到面的渐进式推进</p>
+            <div class="grid grid-3">
+                <div class="challenge-card fade-up delay-1 current-phase">
+                    <div style="font-size:3.2rem;text-align:center;display:block;margin-bottom:15px;">🚀</div>
+                    <h3 style="font-size:1.6rem;text-align:center;margin-bottom:12px;">第一阶段（0-4个月）</h3>
+                    <p style="font-size:1.05rem;line-height:1.6;"><strong>岗位助手（MVP）- 计划</strong><br>情报监测助手（政策、舆情）、智能客服助手、AI数据洞察（MVP）<br><strong>目标：</strong>验证价值，建立信心</p>
+                </div>
+                <div class="challenge-card fade-up delay-2">
+                    <div style="font-size:3.2rem;text-align:center;display:block;margin-bottom:15px;">⚡</div>
+                    <h3 style="font-size:1.6rem;text-align:center;margin-bottom:12px;">第二阶段（4-12个月）</h3>
+                    <p style="font-size:1.05rem;line-height:1.6;"><strong>业务深入改造</strong><br>客户增长领航员、AI风控审查官、智能贷后管理<br><strong>目标：</strong>沉淀能力，搭建平台</p>
+                </div>
+                <div class="challenge-card fade-up delay-3">
+                    <div style="font-size:3.2rem;text-align:center;display:block;margin-bottom:15px;">🌟</div>
+                    <h3 style="font-size:1.6rem;text-align:center;margin-bottom:12px;">第三阶段（12个月+）</h3>
+                    <p style="font-size:1.05rem;line-height:1.6;"><strong>平台化与生态</strong><br>多场景协同与Agent矩阵编排<br><strong>目标：</strong>规模化推广，助力业务发展</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">2 / 8</div>
+    </div>
+
+    <!-- MVP选型回顾 -->
+    <div class="slide" id="slide3">
+        <div class="slide-content">
+            <h2>第一阶段Agent开发功能（含MVP版）</h2>
+            <p class="subtitle" style="margin-bottom: 30px;">汇报会议确定推进的4个方向（本页）</p>
+            <div class="grid grid-2" style="gap: 20px;">
+                <div class="card fade-up delay-1">
+                    <h3>🔍 舆情监测Agent</h3>
+                    <ul>
+                        <li><strong>功能：</strong>舆情看板日报/周报、舆情风险预警、热点/主题/情感分析</li>
+                        <li><strong>价值：</strong>实时掌握市场舆情，快速识别负面风险</li>
+                        <li><strong>周期：</strong>1-3个月</li>
+                        <li><strong>状态：</strong><span style="color: var(--brand-2); font-weight: 700;">✅ 待上线</span></li>
+                    </ul>
+                </div>
+                <div class="card fade-up delay-2">
+                    <h3>📜 政策法规监测Agent</h3>
+                    <ul>
+                        <li><strong>功能：</strong>监管动态与政策解读、领导讲话提要、高风险政策标注与预警</li>
+                        <li><strong>价值：</strong>快速聚合中央/地方监管信息，聚焦消费金融、小贷等领域</li>
+                        <li><strong>周期：</strong>1-3个月</li>
+                        <li><strong>状态：</strong><span style="color: var(--brand-2); font-weight: 700;">✅ 待上线</span></li>
+                    </ul>
+                </div>
+                <div class="card fade-up delay-3">
+                    <h3>📊 AI数据洞察Agent（MVP）</h3>
+                    <ul>
+                        <li><strong>功能：</strong>对接业务数据，自然语言提问自动生成SQL，自动生成洞察报告与行动建议</li>
+                        <li><strong>价值：</strong>帮助决策层快速把握趋势与异常</li>
+                        <li><strong>周期：</strong>2-4个月</li>
+                        <li><strong>状态：</strong><span style="color: var(--brand-2); font-weight: 700;">✅ 待上线</span></li>
+                    </ul>
+                </div>
+                <div class="card fade-up delay-4">
+                    <h3>📈 首提率日报/周报Agent（新增）</h3>
+                    <ul>
+                        <li><strong>功能：</strong>首提率趋势监测与解读、渠道/人群拆解、预警与归因、改善建议</li>
+                        <li><strong>价值：</strong>为持续提升集团员工首提率出谋划策</li>
+                        <li><strong>周期：</strong>2-4个月</li>
+                        <li><strong>状态：</strong><span style="color: var(--brand-2); font-weight: 700;">✅ 待上线</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">3 / 8</div>
+    </div>
+
+    <!-- 第一阶段关联AI项目（新增） -->
+    <div class="slide" id="slide3b">
+        <div class="slide-content">
+            <h2>第一阶段关联AI项目（新增）</h2>
+            <p class="subtitle" style="margin-bottom: 30px;">新增方向：智能客服升级 / 行业资讯自动推送</p>
+            <div class="grid grid-2" style="gap: 20px;">
+                <div class="card fade-up delay-1">
+                    <h3>📞 智能客服升级（2.1版本）</h3>
+                    <ul>
+                        <li><strong>功能：</strong>知识库问答、话术推荐、AI自动小结、咨询标签、概览信息查询、智能回复；自助功能：注销/下载结清证明等</li>
+                        <li><strong>价值：</strong>提升客服效率，标准化服务质量</li>
+                        <li><strong>周期：</strong>1-3个月</li>
+                        <li><strong>状态：</strong><span style="color: var(--brand-2); font-weight: 700;">✅ 待上线</span></li>
+                    </ul>
+                </div>
+                <div class="card fade-up delay-2">
+                    <h3>📰 金融行业微信文章推送（新增）</h3>
+                    <ul>
+                        <li><strong>功能：</strong>自动抓取行业/监管微信文章，定时推送至企业钉钉大群</li>
+                        <li><strong>价值：</strong>替代法务每周手动查阅、收集与整理，节约人力并提升及时性</li>
+                        <li><strong>周期：</strong>1-2个月</li>
+                        <li><strong>状态：</strong><span style="color: var(--brand-2); font-weight: 700;">✅ 待上线</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">4 / 8</div>
+    </div>
+
+    <!-- 整体技术方案说明 -->
+    <div class="slide" id="slide4">
+        <div class="slide-content">
+            <h2>AI Agent平台整体框架示意图</h2>
+            <p class="subtitle">三层架构设计：应用门户 · 编排执行 · 模型工具</p>
+            <div class="architecture-container">
+                <!-- 左侧：三层架构 -->
+                <div class="arch-left">
+                    <!-- 应用层 -->
+                    <div class="arch-layer fade-up delay-1">
+                        <div class="arch-layer-title">应用层 · 智能体门户（自研）</div>
+                        <div class="arch-components">
+                            <div class="arch-component">智能体动态管理</div>
+                            <div class="arch-component">任务调度与编排</div>
+                            <div class="arch-component">AI对话交互</div>
+                            <div class="arch-component">用户权限管理</div>
+                            <div class="arch-component">监控与日志</div>
+                        </div>
+                    </div>
+                    <div class="arch-arrow">↓</div>
+                    
+                    <!-- Agent编排与执行层 -->
+                    <div class="arch-layer fade-up delay-2">
+                        <div class="arch-layer-title">Agent编排与执行层（阿里云百炼平台 + 自研服务）</div>
+                        <div class="arch-components">
+                            <div class="arch-component">工作流编排引擎</div>
+                            <div class="arch-component">任务规划与分解</div>
+                            <div class="arch-component">工具、插件管理</div>
+                            <div class="arch-component">上下文记忆管理</div>
+                            <div class="arch-component">提示词调优与管理</div>
+                        </div>
+                    </div>
+                    <div class="arch-arrow">↓</div>
+                    
+                    <!-- 模型与工具层 -->
+                    <div class="arch-layer fade-up delay-3">
+                        <div class="arch-layer-title">模型与工具层</div>
+                        <div class="arch-components">
+                            <div class="arch-component">通义千问模型</div>
+                            <div class="arch-component">第三方模型接入</div>
+                            <div class="arch-component">RAG检索增强</div>
+                            <div class="arch-component">数据接入（DB）</div>
+                            <div class="arch-component">内外部API集成</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧：智能输出服务 -->
+                <div class="arch-arrow-right">→</div>
+                <div class="arch-right">
+                    <div class="arch-output-service fade-up delay-4">
+                        <div class="arch-output-title">智能输出服务</div>
+                        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
+                            <div class="arch-output-item">AI问题咨询</div>
+                            <div class="arch-output-item">AI数据洞察分析</div>
+                            <div class="arch-output-item">舆情查询与追踪</div>
+                            <div class="arch-output-item">政策查询与解读</div>
+                            <div class="arch-output-item">首提率指标监测</div>
+                            <div class="arch-output-item">钉钉日报/周报</div>
+                            <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 600; padding: 6px 0; opacity: 0.6; display: flex; align-items: center; justify-content: center; line-height: 1.2;">...更多服务待上线</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">5 / 8</div>
+    </div>
+
+    <!-- 演示汇报链接 -->
+    <div class="slide" id="slide6">
+        <div class="slide-content">
+            <h2>演示汇报链接</h2>
+            
+            <!-- 上方：三个界面截图 -->
+            <div class="grid grid-3" style="margin-bottom: 30px; gap: 20px;">
+                <div class="card fade-up delay-1">
+                    <h3 style="text-align: center; margin-bottom: 12px; font-size: 1.2rem;">智能体门户</h3>
+                    <a href="http://192.168.96.224:8082/agent/portal" target="_blank" style="display: block; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-1); background: #fff; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 36px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(16, 24, 40, 0.12)'">
+                        <img src="./image/menghu.png" alt="智能体门户截图（请替换为提供的图片）" style="width: 100%; display: block; object-fit: cover;">
+                    </a>
+                </div>
+                <div class="card fade-up delay-2">
+                    <h3 style="text-align: center; margin-bottom: 12px; font-size: 1.2rem;">百炼智能平台</h3>
+                    <a href="https://bailian.console.aliyun.com" target="_blank" style="display: block; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-1); background: #fff; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 36px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(16, 24, 40, 0.12)'">
+                        <img src="./image/bailian.png" alt="百炼智能平台截图（请替换为提供的图片）" style="width: 100%; display: block; object-fit: cover;">
+                    </a>
+                </div>
+                <div class="card fade-up delay-3">
+                    <h3 style="text-align: center; margin-bottom: 12px; font-size: 1.2rem;">舆情管理平台</h3>
+                    <a href="https://opinion-monitoring.fujfu.com/login" target="_blank" style="display: block; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-1); background: #fff; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 36px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(16, 24, 40, 0.12)'">
+                        <img src="./image/yuqingmenghu.png" alt="舆情管理平台截图（请替换为提供的图片）" style="width: 100%; display: block; object-fit: cover;">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">6 / 8</div>
+    </div>
+
+    <!-- 后续计划与展望 -->
+    <div class="slide" id="slide14">
+        <div class="slide-content">
+            <h2>后续计划与展望</h2>
+            <div class="grid grid-2">
+                <div class="card fade-up delay-1">
+                    <h3>📅 短期计划（1-2个月）</h3>
+                    <ul>
+                        <li>持续优化AI分析准确率</li>
+                        <li>收集用户反馈，迭代功能</li>
+                        <li>扩展数据源覆盖范围</li>
+                        <li>优化报告模板与推送策略</li>
+                        <li>启动渗透率Agent开发</li>
+                    </ul>
+                </div>
+                <div class="card fade-up delay-2">
+                    <h3>🎯 中期计划（3-6个月）</h3>
+                    <ul>
+                        <li>启动第二阶段深入业务Agent规划与开发</li>
+                        <li>研究AI应用于风控领域方案梳理</li>
+                        <li>平台化能力沉淀（多Agent协作）</li>
+                        <li>工程化增强（灰度/回滚）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">7 / 8</div>
+    </div>
+
+    <!-- 谢谢页 -->
+    <div class="slide" id="slide15">
+        <div class="slide-content">
+            <div style="font-size: 4rem; margin-bottom: 30px;">🙏</div>
+            <h1 style="font-size: 4rem; margin-bottom: 20px;">谢谢</h1>
+            <p class="subtitle" style="font-size: 1.4rem; margin-bottom: 40px; color: #EAF2FF;">
+                感谢聆听 · 期待您的反馈与建议
+            </p>
+        </div>
+        <div class="slide-number">8 / 8</div>
+    </div>
+
+</body>
+<script>
+// Auto-adjust slide numbers
+(function() {
+  try {
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const total = slides.length;
+    slides.forEach((slide, index) => {
+      let numEl = slide.querySelector('.slide-number');
+      if (!numEl) {
+        numEl = document.createElement('div');
+        numEl.className = 'slide-number';
+        slide.appendChild(numEl);
+      }
+      numEl.textContent = `${index + 1} / ${total}`;
+    });
+  } catch (e) {
+    // no-op
+  }
+})();
+
+// 键盘导航功能
+(function() {
+  let currentSlideIndex = 0;
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const totalSlides = slides.length;
+  
+  function showSlide(index) {
+    slides.forEach(slide => {
+      slide.style.display = 'none';
+    });
+    
+    if (slides[index]) {
+      slides[index].style.display = 'flex';
+      currentSlideIndex = index;
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+    }
+  }
+  
+  function nextSlide() {
+    if (currentSlideIndex < totalSlides - 1) {
+      showSlide(currentSlideIndex + 1);
+    }
+  }
+  
+  function prevSlide() {
+    if (currentSlideIndex > 0) {
+      showSlide(currentSlideIndex - 1);
+    }
+  }
+  
+  document.addEventListener('keydown', function(event) {
+    switch(event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+      case ' ':
+        event.preventDefault();
+        nextSlide();
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        event.preventDefault();
+        prevSlide();
+        break;
+      case 'Home':
+        event.preventDefault();
+        showSlide(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        showSlide(totalSlides - 1);
+        break;
+      case 'Escape':
+        event.preventDefault();
+        slides.forEach(slide => {
+          slide.style.display = '';
+        });
+        document.body.style.overflow = 'auto';
+        window.scrollTo(0, 0);
+        break;
+    }
+  });
+  
+  document.addEventListener('wheel', function(event) {
+    event.preventDefault();
+    if (event.deltaY > 0) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
+  });
+  
+  showSlide(0);
+  
+  const navHint = document.createElement('div');
+  navHint.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 1000;
+    font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+  `;
+  navHint.innerHTML = `
+    <div>← → 切换页面</div>
+    <div>↑ ↓ 切换页面</div>
+    <div>空格 下一页</div>
+    <div>滚轮 切换页面</div>
+    <div>ESC 退出全屏</div>
+  `;
+  document.body.appendChild(navHint);
+  
+  setTimeout(() => {
+    navHint.style.opacity = '0';
+    navHint.style.transition = 'opacity 0.5s';
+    setTimeout(() => {
+      navHint.remove();
+    }, 500);
+  }, 3000);
+  
+})();
+</script>
+</html>
+
