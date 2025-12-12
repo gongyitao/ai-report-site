@@ -92,6 +92,8 @@
         #slide10 { background: var(--bg-2); }
         #slide11 { background: var(--bg-3); }
         #slide12 { background: var(--bg-2); }
+        #slide6a { background: var(--bg-2); }
+        #slide15 { background: var(--bg-1); color: #fff; }
 
         /* Typography */
         h1 { font-size: 3.6rem; font-weight: 700; margin-bottom: 18px; letter-spacing: 0.3px; }
@@ -99,7 +101,8 @@
         h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 14px; color: var(--text-strong); }
         p { font-size: 1.12rem; line-height: 1.8; max-width: 900px; margin: 0 auto; color: var(--text-normal); }
         .subtitle { font-size: 1.25rem; font-weight: 400; opacity: 0.95; color: #E6EEFF; }
-        #slide2 .subtitle, #slide3 .subtitle { color: var(--text-muted); }
+        /* 非封面页的副标题使用更深的颜色，提高可读性 */
+        .slide:not(#slide1) .subtitle { color: var(--text-normal); font-weight: 500; opacity: 0.9; }
 
         .slide:not(#slide1) .slide-content > h1,
         .slide:not(#slide1) .slide-content > h2 { font-size: 2.6rem !important; line-height: 1.3; }
@@ -247,6 +250,26 @@
             background: #FFF7ED;
             color: var(--text-strong);
         }
+        
+        /* 当前阶段高亮样式 */
+        .current-phase {
+            border: 2px dashed var(--brand) !important;
+            background: #EFF6FF !important;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25) !important;
+            position: relative;
+        }
+        .current-phase::before {
+            content: "当前阶段";
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--brand);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
         .phase-highlight-title {
             font-weight: 800;
             color: var(--brand-3);
@@ -330,13 +353,14 @@
             flex: 0 0 280px;
             display: flex;
             flex-direction: column;
+            align-self: stretch;
         }
         .arch-layer {
             background: #FFFFFF;
             border: 2px solid var(--card-border);
             border-radius: 10px;
-            padding: 12px 16px;
-            margin: 6px 0;
+            padding: 14px 18px;
+            margin: 7px 0;
             box-shadow: var(--shadow-1);
             position: relative;
         }
@@ -368,19 +392,21 @@
             text-align: center;
             font-size: 1.4rem;
             color: var(--brand);
-            margin: 4px 0;
+            margin: 5px 0;
         }
         .arch-output-service {
             background: #FFFFFF;
             border: 2px solid var(--card-border);
             border-radius: 10px;
             padding: 12px 16px;
-            margin: 6px 0;
+            margin: 6px 0 7px 0;
             box-shadow: var(--shadow-1);
             position: relative;
             display: flex;
             flex-direction: column;
             flex: 1;
+            min-height: 100%;
+            height: 100%;
         }
         .arch-output-title {
             font-size: 1rem;
@@ -414,7 +440,7 @@
         
         /* 第4页特殊优化 */
         #slide4 .slide-content {
-            padding-bottom: 20px;
+            padding-bottom: 30px;
             max-height: calc(100vh - 80px);
         }
         #slide4 h2 {
@@ -446,10 +472,10 @@
             <h2>AI Agent整体规划回顾</h2>
             <p class="subtitle" style="margin-bottom: 30px;">三阶段实施路线图：由点到面的渐进式推进</p>
             <div class="grid grid-3">
-                <div class="challenge-card fade-up delay-1">
+                <div class="challenge-card fade-up delay-1 current-phase">
                     <div style="font-size:3.2rem;text-align:center;display:block;margin-bottom:15px;">🚀</div>
                     <h3 style="font-size:1.6rem;text-align:center;margin-bottom:12px;">第一阶段（0-4个月）</h3>
-                    <p style="font-size:1.05rem;line-height:1.6;"><strong>岗位助手（MVP）</strong><br>情报监测助手（政策、舆情）、智能客服助手、AI数据洞察（MVP）<br><strong>目标：</strong>验证价值，建立信心</p>
+                    <p style="font-size:1.05rem;line-height:1.6;"><strong>岗位助手（MVP）- 计划</strong><br>情报监测助手（政策、舆情）、智能客服助手、AI数据洞察（MVP）<br><strong>目标：</strong>验证价值，建立信心</p>
                 </div>
                 <div class="challenge-card fade-up delay-2">
                     <div style="font-size:3.2rem;text-align:center;display:block;margin-bottom:15px;">⚡</div>
@@ -569,10 +595,9 @@
                         <div class="arch-components">
                             <div class="arch-component">工作流编排引擎</div>
                             <div class="arch-component">任务规划与分解</div>
-                            <div class="arch-component">工具调用管理</div>
+                            <div class="arch-component">工具、插件管理</div>
                             <div class="arch-component">上下文记忆管理</div>
                             <div class="arch-component">提示词调优与管理</div>
-                            <div class="arch-component">执行回溯与重试</div>
                         </div>
                     </div>
                     <div class="arch-arrow">↓</div>
@@ -584,8 +609,7 @@
                             <div class="arch-component">通义千问模型</div>
                             <div class="arch-component">第三方模型接入</div>
                             <div class="arch-component">RAG检索增强</div>
-                            <div class="arch-component">数据接入（DB/API）</div>
-                            <div class="arch-component">知识库管理</div>
+                            <div class="arch-component">数据接入（DB）</div>
                             <div class="arch-component">内外部API集成</div>
                         </div>
                     </div>
@@ -603,17 +627,76 @@
                             <div class="arch-output-item">政策查询与解读</div>
                             <div class="arch-output-item">首提率指标监测</div>
                             <div class="arch-output-item">钉钉日报/周报</div>
-                            <div style="text-align: center; color: var(--text-muted); font-size: 1.2rem; font-weight: 700; padding: 8px 0; opacity: 0.6;">...更多服务待上线</div>
+                            <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 600; padding: 6px 0; opacity: 0.6; display: flex; align-items: center; justify-content: center; line-height: 1.2;">...更多服务待上线</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="slide-number">4 / 10</div>
+        <div class="slide-number">4 / 16</div>
+    </div>
+
+    <!-- 演示汇报链接 -->
+    <div class="slide" id="slide6">
+        <div class="slide-content">
+            <h2>演示汇报链接</h2>
+            
+            <!-- 上方：三个界面截图 -->
+            <div class="grid grid-3" style="margin-bottom: 30px; gap: 20px;">
+                <div class="card fade-up delay-1">
+                    <h3 style="text-align: center; margin-bottom: 12px; font-size: 1.2rem;">智能体门户</h3>
+                    <a href="http://192.168.96.224:8082/agent/portal" target="_blank" style="display: block; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-1); background: #fff; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 36px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(16, 24, 40, 0.12)'">
+                        <img src="./image/menghu.png" alt="智能体门户截图（请替换为提供的图片）" style="width: 100%; display: block; object-fit: cover;">
+                    </a>
+                </div>
+                <div class="card fade-up delay-2">
+                    <h3 style="text-align: center; margin-bottom: 12px; font-size: 1.2rem;">百炼智能平台</h3>
+                    <a href="https://bailian.console.aliyun.com" target="_blank" style="display: block; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-1); background: #fff; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 36px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(16, 24, 40, 0.12)'">
+                        <img src="./image/bailian.png" alt="百炼智能平台截图（请替换为提供的图片）" style="width: 100%; display: block; object-fit: cover;">
+                    </a>
+                </div>
+                <div class="card fade-up delay-3">
+                    <h3 style="text-align: center; margin-bottom: 12px; font-size: 1.2rem;">舆情管理平台</h3>
+                    <a href="https://opinion-monitoring.fujfu.com/login" target="_blank" style="display: block; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-1); background: #fff; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 36px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(16, 24, 40, 0.12)'">
+                        <img src="./image/yuqingmenghu.png" alt="舆情管理平台截图（请替换为提供的图片）" style="width: 100%; display: block; object-fit: cover;">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">5 / 16</div>
+    </div>
+
+    <!-- 后续计划与展望 -->
+    <div class="slide" id="slide14">
+        <div class="slide-content">
+            <h2>后续计划与展望</h2>
+            <div class="grid grid-2">
+                <div class="card fade-up delay-1">
+                    <h3>📅 短期计划（1-2个月）</h3>
+                    <ul>
+                        <li>持续优化AI分析准确率</li>
+                        <li>收集用户反馈，迭代功能</li>
+                        <li>扩展数据源覆盖范围</li>
+                        <li>优化报告模板与推送策略</li>
+                        <li>启动渗透率Agent开发</li>
+                    </ul>
+                </div>
+                <div class="card fade-up delay-2">
+                    <h3>🎯 中期计划（3-6个月）</h3>
+                    <ul>
+                        <li>启动第二阶段深入业务Agent规划与开发</li>
+                        <li>研究AI应用于风控领域方案梳理</li>
+                        <li>平台化能力沉淀（多Agent协作）</li>
+                        <li>工程化增强（灰度/回滚）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">6 / 16</div>
     </div>
 
     <!-- 第一阶段成果展示 - 舆情监测智能体报告效果 -->
-    <div class="slide" id="slide6">
+    <div class="slide" id="slide7">
         <div class="slide-content">
             <h2>舆情监测智能体（1/2）：报告效果</h2>
             <div class="demo-section">
@@ -628,11 +711,11 @@
                 </div>
             </div>
         </div>
-        <div class="slide-number">5 / 10</div>
+        <div class="slide-number">7 / 16</div>
     </div>
 
     <!-- 第一阶段成果展示 - 数据来源与竞品覆盖 -->
-    <div class="slide" id="slide7">
+    <div class="slide" id="slide8">
         <div class="slide-content">
             <h2>舆情监测智能体（2/2）：数据来源与竞品覆盖</h2>
             <div class="demo-section">
@@ -935,45 +1018,16 @@
         <div class="slide-number">15 / 15</div>
     </div>
 
-
-    <!-- 后续计划 -->
-    <div class="slide" id="slide14">
+    <!-- 谢谢页 -->
+    <div class="slide" id="slide15">
         <div class="slide-content">
-            <h2>后续计划与展望</h2>
-            <div class="grid grid-2">
-                <div class="card fade-up delay-1">
-                    <h3>📅 短期计划（1-2个月）</h3>
-                    <ul>
-                        <li>持续优化AI分析准确率</li>
-                        <li>收集用户反馈，迭代功能</li>
-                        <li>扩展数据源覆盖范围</li>
-                        <li>优化报告模板与推送策略</li>
-                        <li>启动渗透率Agent开发</li>
-                    </ul>
-                </div>
-                <div class="card fade-up delay-2">
-                    <h3>🎯 中期计划（3-6个月）</h3>
-                    <ul>
-                        <li>启动第二阶段深入业务Agent规划与开发</li>
-                        <li>研究AI应用于风控领域方案梳理</li>
-                        <li>平台化能力沉淀（多Agent协作）</li>
-                        <li>工程化增强（灰度/回滚、特征服务）</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="agent-card fade-up delay-3" style="margin-top: 24px;">
-                <div class="agent-icon">🌟</div>
-                <div class="agent-details">
-                    <h3>演示链接</h3>
-                    <p style="font-size: 1.1rem; line-height: 1.8; margin: 0;">
-                        智能体门户：<a href="http://192.168.96.224:8082/agent/portal">http://192.168.96.224:8082/agent/portal</a><br>
-                        百炼Agent平台：<a href="https://bailian.console.aliyun.com">https://bailian.console.aliyun.com</a><br>
-                        政策、舆情管理后台：<a href="https://opinion-monitoring.fujfu.com/login">https://opinion-monitoring.fujfu.com/login</a><br>
-                    </p>
-                </div>
-            </div>
+            <div style="font-size: 4rem; margin-bottom: 30px;">🙏</div>
+            <h1 style="font-size: 4rem; margin-bottom: 20px;">谢谢</h1>
+            <p class="subtitle" style="font-size: 1.4rem; margin-bottom: 40px; color: #EAF2FF;">
+                感谢聆听 · 期待您的反馈与建议
+            </p>
         </div>
-        <div class="slide-number">12 / 12</div>
+        <div class="slide-number">16 / 16</div>
     </div>
 
 </body>
